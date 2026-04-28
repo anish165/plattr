@@ -4,26 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Plattr — India's Hospitality Ecosystem Platform</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,600,700&f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font-display: 'Lora', Georgia, serif;
-      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
-      --bg:          oklch(0.98 0.008 75);
-      --bg2:         oklch(0.96 0.008 75);
-      --text:        oklch(0.17 0.015 55);
-      --text2:       oklch(0.42 0.015 55);
-      --text3:       oklch(0.60 0.010 55);
-      --accent:      oklch(0.55 0.14 35);
-      --accent-dark: oklch(0.42 0.14 35);
-      --accent-light:oklch(0.96 0.04 35);
-      --teal:        oklch(0.54 0.10 195);
-      --border:      oklch(0.90 0.008 75);
+      --font-display: 'Cabinet Grotesk', sans-serif;
+      --font-body:    'Satoshi', sans-serif;
+
+      /* Primary — green */
+      --accent:       #2D7B4F;
+      --accent-dark:  #1F5C3A;
+      --accent-light: #E9F7EE;
+
+      /* High-emphasis CTA — orange */
+      --cta:          #D67729;
+      --cta-hover:    #b85e1c;
+      --cta-light:    #FDF1E7;
+
+      /* Surfaces */
+      --bg:           #F9F8F5;
+      --bg2:          #F5F3EF;
+      --surface:      #FFFFFF;
+
+      /* Text */
+      --text:         rgb(26, 26, 26);
+      --text2:        rgb(107, 107, 107);
+      --text3:        rgb(163, 163, 163);
+
+      /* Borders & dividers */
+      --border:       #E3DFD9;
+      --divider:      #ddd8d0;
+
+      /* Shadows */
+      --shadow-card:  0 12px 32px rgba(26,26,26,0.08), 0 4px 8px rgba(26,26,26,0.04);
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-search:0 2px 8px rgba(0,0,0,0.15);
     }
 
     html { scroll-behavior: smooth; }
@@ -75,11 +92,11 @@
       border-color: #C44A6E; animation: shake 0.3s ease;
     }
     #password-gate .gate-btn {
-      width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px;
-      cursor: pointer; font-family: var(--font-body); font-size: 16px; font-weight: 600;
-      color: white; transition: opacity 0.15s;
+      width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 16px;
+      cursor: pointer; font-family: var(--font-body); font-size: 16px; font-weight: 500;
+      color: white; transition: background 0.15s;
     }
-    #password-gate .gate-btn:hover { opacity: 0.9; }
+    #password-gate .gate-btn:hover { background: var(--accent-dark); }
     #password-gate .gate-error {
       font-family: var(--font-body); font-size: 13px; color: #C44A6E; margin-top: 12px; min-height: 20px;
     }
@@ -168,12 +185,10 @@
   <!-- Main App -->
   <script type="text/babel">
     const TWEAK_DEFAULTS = {
-      "accentColor": "oklch(0.55 0.14 35)",
-      "fontDisplay": "Lora",
-      "fontBody": "Plus Jakarta Sans",
+      "primaryColor": "#2D7B4F",
+      "ctaColor": "#D67729",
       "heroTagline": "Open your restaurant with the right experts by your side.",
-      "consultantCount": "60+",
-      "darkNav": true
+      "consultantCount": "60+"
     };
 
     function App() {
@@ -206,8 +221,10 @@
       };
 
       React.useEffect(() => {
-        document.documentElement.style.setProperty("--accent", tweaks.accentColor);
-      }, [tweaks.accentColor]);
+        document.documentElement.style.setProperty("--accent", tweaks.primaryColor);
+        document.documentElement.style.setProperty("--accent-dark", tweaks.primaryColor);
+        document.documentElement.style.setProperty("--cta", tweaks.ctaColor);
+      }, [tweaks.primaryColor, tweaks.ctaColor]);
 
       return (
         <>
@@ -240,14 +257,12 @@
 
           <TweaksPanel>
             <TweakSection label="Brand">
-              <TweakColor label="Accent colour" id="accentColor" value={tweaks.accentColor} onChange={v => setTweak("accentColor", v)} />
+              <TweakColor label="Primary (green)" id="primaryColor" value={tweaks.primaryColor} onChange={v => setTweak("primaryColor", v)} />
+              <TweakColor label="CTA (orange)" id="ctaColor" value={tweaks.ctaColor} onChange={v => setTweak("ctaColor", v)} />
             </TweakSection>
             <TweakSection label="Copy">
               <TweakText label="Consultant count" id="consultantCount" value={tweaks.consultantCount} onChange={v => setTweak("consultantCount", v)} />
               <TweakText label="Hero tagline" id="heroTagline" value={tweaks.heroTagline} onChange={v => setTweak("heroTagline", v)} />
-            </TweakSection>
-            <TweakSection label="Navigation">
-              <TweakToggle label="Dark navbar on scroll" id="darkNav" value={tweaks.darkNav} onChange={v => setTweak("darkNav", v)} />
             </TweakSection>
           </TweaksPanel>
         </>
