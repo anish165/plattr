@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plattr — India's Hospitality Ecosystem Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-display: 'Lora', Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --bg:          oklch(0.98 0.008 75);
+      --bg2:         oklch(0.96 0.008 75);
+      --text:        oklch(0.17 0.015 55);
+      --text2:       oklch(0.42 0.015 55);
+      --text3:       oklch(0.60 0.010 55);
+      --accent:      oklch(0.55 0.14 35);
+      --accent-dark: oklch(0.42 0.14 35);
+      --accent-light:oklch(0.96 0.04 35);
+      --teal:        oklch(0.54 0.10 195);
+      --border:      oklch(0.90 0.008 75);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    input[type=range] { height: 6px; cursor: pointer; border-radius: 4px; }
+    input::placeholder { color: rgba(255,255,255,0.35) !important; }
+
+    /* Password gate */
+    #password-gate {
+      position: fixed; inset: 0; z-index: 99999;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg);
+    }
+    #password-gate.hidden { display: none; }
+    #password-gate .gate-card {
+      background: white; border: 1px solid var(--border); border-radius: 20px;
+      padding: 48px 40px; width: 100%; max-width: 400px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.1); text-align: center;
+    }
+    #password-gate .gate-logo {
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 32px;
+    }
+    #password-gate h2 {
+      font-family: var(--font-display); font-size: 24px; font-weight: 700;
+      color: var(--text); margin-bottom: 8px; letter-spacing: -0.02em;
+    }
+    #password-gate p {
+      font-family: var(--font-body); font-size: 15px; color: var(--text2);
+      margin-bottom: 28px; line-height: 1.6;
+    }
+    #password-gate input[type="password"] {
+      width: 100%; padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px;
+      font-family: var(--font-body); font-size: 16px; color: var(--text);
+      background: var(--bg); outline: none; margin-bottom: 16px; transition: border-color 0.2s;
+    }
+    #password-gate input[type="password"]::placeholder { color: var(--text3) !important; }
+    #password-gate input[type="password"]:focus { border-color: var(--accent); }
+    #password-gate input.error {
+      border-color: #C44A6E; animation: shake 0.3s ease;
+    }
+    #password-gate .gate-btn {
+      width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px;
+      cursor: pointer; font-family: var(--font-body); font-size: 16px; font-weight: 600;
+      color: white; transition: opacity 0.15s;
+    }
+    #password-gate .gate-btn:hover { opacity: 0.9; }
+    #password-gate .gate-error {
+      font-family: var(--font-body); font-size: 13px; color: #C44A6E; margin-top: 12px; min-height: 20px;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+  </style>
+
+  <script>
+    // Check session auth before page renders
+    (function() {
+      if (sessionStorage.getItem('plattr_auth') === '1') {
+        document.documentElement.classList.add('authenticated');
+      }
+    })();
+  </script>
+  <style>
+    html.authenticated #password-gate { display: none; }
+  </style>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Password Gate -->
+  <div id="password-gate">
+    <div class="gate-card">
+      <div class="gate-logo">
+        <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="13" stroke="var(--accent)" stroke-width="2"/>
+          <path d="M8 14 Q14 8 20 14 Q14 20 8 14Z" fill="var(--accent)" opacity="0.9"/>
+          <circle cx="14" cy="14" r="2.5" fill="var(--accent)"/>
+        </svg>
+        <span style="font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--text);letter-spacing:-0.02em">Plattr</span>
+      </div>
+      <h2>Welcome</h2>
+      <p>Enter the access password to continue.</p>
+      <form id="gate-form">
+        <input type="password" id="gate-password" placeholder="Enter password" autocomplete="off" autofocus />
+        <button type="submit" class="gate-btn">Enter</button>
+      </form>
+      <div class="gate-error" id="gate-error"></div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+
+  <script>
+    const HASH = '92aa49e9dcb9da093d40957833ef8f70d870a58282ca3801cadc9ee8b63b8052';
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    document.getElementById('gate-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('gate-password');
+      const hash = await sha256(input.value);
+      if (hash === HASH) {
+        sessionStorage.setItem('plattr_auth', '1');
+        document.getElementById('password-gate').style.display = 'none';
+      } else {
+        input.classList.add('error');
+        document.getElementById('gate-error').textContent = 'Incorrect password. Please try again.';
+        setTimeout(() => input.classList.remove('error'), 300);
+      }
+    });
+  </script>
+
+  <!-- Data (plain JS) -->
+  <script src="plattr-data.js"></script>
+
+  <!-- Components (Babel/JSX) -->
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="plattr-nav.jsx"></script>
+  <script type="text/babel" src="plattr-home.jsx"></script>
+  <script type="text/babel" src="plattr-directory.jsx"></script>
+  <script type="text/babel" src="plattr-resources.jsx"></script>
+  <script type="text/babel" src="plattr-tools.jsx"></script>
+  <script type="text/babel" src="plattr-news.jsx"></script>
+
+  <!-- Main App -->
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = {
+      "accentColor": "oklch(0.55 0.14 35)",
+      "fontDisplay": "Lora",
+      "fontBody": "Plus Jakarta Sans",
+      "heroTagline": "Open your restaurant with the right experts by your side.",
+      "consultantCount": "60+",
+      "darkNav": true
+    };
+
+    function App() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      const [page, setPage] = React.useState("home");
+      const [profileSlug, setProfileSlug] = React.useState(null);
+      const [authUser, setAuthUser] = React.useState(null);
+      const [authModal, setAuthModal] = React.useState(null);
+
+      React.useEffect(() => {
+        const saved = sessionStorage.getItem("plattr_page");
+        const savedSlug = sessionStorage.getItem("plattr_slug");
+        if (saved) { setPage(saved); }
+        if (savedSlug) { setProfileSlug(savedSlug); }
+      }, []);
+
+      const navigate = (p, slug) => {
+        setPage(p);
+        sessionStorage.setItem("plattr_page", p);
+        if (slug) { setProfileSlug(slug); sessionStorage.setItem("plattr_slug", slug); }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      const viewConsultant = (slug) => navigate("profile", slug);
+      const openAuth = (mode) => setAuthModal(mode || "signup");
+      const handleAuthSuccess = (user) => {
+        setAuthUser(user);
+        setAuthModal(null);
+      };
+
+      React.useEffect(() => {
+        document.documentElement.style.setProperty("--accent", tweaks.accentColor);
+      }, [tweaks.accentColor]);
+
+      return (
+        <>
+          <Nav
+            currentPage={page}
+            onNavigate={navigate}
+            authUser={authUser}
+            onAuthOpen={openAuth}
+            onAuthLogout={() => setAuthUser(null)}
+          />
+
+          <main>
+            {page === "home"      && <HomePage onNavigate={navigate} onAuthOpen={openAuth} onViewConsultant={viewConsultant} />}
+            {page === "directory" && <DirectoryPage onViewConsultant={viewConsultant} />}
+            {page === "profile"   && <ProfilePage slug={profileSlug} onBack={() => navigate("directory")} onNavigate={navigate} authUser={authUser} onAuthOpen={openAuth} />}
+            {page === "resources" && <ResourcesPage onNavigate={navigate} />}
+            {page === "tools"     && <ToolsPage onNavigate={navigate} />}
+            {page === "news"      && <NewsPage />}
+          </main>
+
+          {page !== "profile" && <Footer onNavigate={navigate} />}
+
+          {authModal && (
+            <AuthModal
+              mode={authModal}
+              onClose={() => setAuthModal(null)}
+              onSuccess={handleAuthSuccess}
+            />
+          )}
+
+          <TweaksPanel>
+            <TweakSection label="Brand">
+              <TweakColor label="Accent colour" id="accentColor" value={tweaks.accentColor} onChange={v => setTweak("accentColor", v)} />
+            </TweakSection>
+            <TweakSection label="Copy">
+              <TweakText label="Consultant count" id="consultantCount" value={tweaks.consultantCount} onChange={v => setTweak("consultantCount", v)} />
+              <TweakText label="Hero tagline" id="heroTagline" value={tweaks.heroTagline} onChange={v => setTweak("heroTagline", v)} />
+            </TweakSection>
+            <TweakSection label="Navigation">
+              <TweakToggle label="Dark navbar on scroll" id="darkNav" value={tweaks.darkNav} onChange={v => setTweak("darkNav", v)} />
+            </TweakSection>
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
